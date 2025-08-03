@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="dynamic-title">ZONE X</title>
+    <link id="dynamic-favicon" rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕹️</text></svg>" type="image/svg+xml">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Lato:wght@400;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #ff0000;
+            --secondary: #ff0000;
+            --bg-dark: #000000;
+            --bg-light: #111111;
+            --text-light: rgba(255,255,255,0.9);
+            --transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            --sidebar-width: 80px;
+            --sidebar-expanded-width: 250px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none !important;
+        }
+       
+        body {
+            min-height: 100vh;
+            font-family: 'Press Start 2P', cursive;
+            color: #fff;
+            background-color: #000;
+            display: flex;
+            position: relative;
+            overflow-x: hidden;
+            box-shadow: 0 0 50px 20px rgba(255, 0, 0, 0.1) inset;
+            padding-left: var(--sidebar-width);
+        }
+
+        /* ===== SIDEBAR MENU ===== */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.95);
+            border-right: 1px solid rgba(255, 0, 0, 0.3);
+            z-index: 1000;
+            transition: var(--transition);
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
+        }
+
+        .sidebar:hover {
+            width: var(--sidebar-expanded-width);
+            background: rgba(0, 0, 0, 0.98);
+            border-right: 1px solid var(--primary);
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.4);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            padding: 20px 15px;
+            border-bottom: 1px solid rgba(255, 0, 0, 0.3);
+            margin-bottom: 20px;
+            background: rgba(0, 0, 0, 0.7);
+        }
+        
+        .logo-text {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary);
+            letter-spacing: 0.5px;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar:hover .logo-text {
+            opacity: 1;
+        }
+        
+        .menu-items {
+            display: flex;
+            flex-direction: column;
+            padding: 0 10px;
+        }
+        
+        .menu-item {
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-family: 'Lato', sans-serif;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            border-radius: 6px;
+            margin-bottom: 5px;
+            background: rgba(20, 20, 20, 0.7);
+            border-left: 3px solid transparent;
+        }
+        
+        .menu-item:hover {
+            background: rgba(255, 0, 0, 0.3);
+            color: white;
+            transform: translateX(5px);
+            border-left: 3px solid var(--primary);
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+        }
+        
+        .menu-item.active {
+            background: rgba(255, 0, 0, 0.2);
+            color: white;
+            border-left: 3px solid var(--primary);
+        }
+        
+        .menu-item i {
+            font-size: 1.4rem;
+            min-width: 40px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .menu-item:hover i {
+            color: white;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
+        }
+        
+        .menu-text {
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar:hover .menu-text {
+            opacity: 1;
+        }
+        
+        .badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--primary);
+            color: black;
+            border-radius: 50px;
+            padding: 2px 6px;
+            font-size: 0.65rem;
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+            font-family: 'Press Start 2P', cursive;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        #main-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            text-align: center;
+            width: 100%;
+            max-width: 900px;
+            padding: 30px 20px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+            flex: 1;
+        }
+
+        .title {
+            font-size: 3.5em;
+            color: #ff0000;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
+            white-space: nowrap;
+            height: 1.2em;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.2;
+            transform: translateZ(0);
+        }
+
+        .typing-container {
+            display: inline-block;
+            min-height: 1.2em;
+        }
+
+        .typing-cursor {
+            display: inline-block;
+            width: 10px;
+            height: 1em;
+            background: #ff0000;
+            vertical-align: middle;
+            margin-left: 5px;
+            animation: blink 0.7s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        .marquee-container {
+            width: 98%;
+            overflow: hidden;
+            margin: 10px 0;
+            padding: 15px 0;
+            background: rgba(0, 0, 0, 0.5);
+            position: relative;
+            border-radius: 50px;
+            border: 2px solid rgba(255, 0, 0, 0.5);
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+        }
+
+        .marquee-text {
+            font-family: 'Silkscreen', cursive;
+            color: #ff0000;
+            font-size: 1.8em;
+            white-space: nowrap;
+            display: inline-block;
+            padding-left: 100%;
+            animation: marquee-scroll 15s linear infinite;
+        }
+
+        @keyframes marquee-scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* ===== SEARCH BAR ===== */
+        .search-container {
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            margin: 15px 0;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 16px 24px;
+            padding-right: 60px;
+            font-size: 1.3em;
+            border: none;
+            border-radius: 50px;
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            outline: none;
+            border: 2px solid rgba(255, 0, 0, 0.7);
+            font-family: 'Lato', sans-serif;
+            box-shadow: 0 0 15px 3px rgba(255, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .search-bar:focus {
+            border-color: rgba(255, 0, 0, 0.9);
+            box-shadow: 0 0 20px 5px rgba(255, 0, 0, 0.5);
+        }
+
+        .search-button {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #ff0000;
+            color: #000;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Press Start 2P', cursive;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px 3px rgba(255, 0, 0, 0.5);
+        }
+
+        .search-button:hover {
+            transform: translateY(-50%) scale(1.1);
+            box-shadow: 0 0 20px 5px rgba(255, 0, 0, 0.8);
+        }
+
+        /* ===== DISCORD BUTTON ===== */
+        .discord-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            background: #ff0000;
+            color: white;
+            border-radius: 50px;
+            text-decoration: none;
+            font-family: 'Lato', sans-serif;
+            font-size: 1.1em;
+            font-weight: bold;
+            z-index: 2;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .discord-btn i {
+            color: white;
+            transition: transform 0.3s ease;
+        }
+
+        .discord-btn:hover {
+            background: #ff3333;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(255, 0, 0, 0.7);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* ===== PLEXUS BACKGROUND ===== */
+        #plexus-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: #000;
+        }
+
+        /* ===== CURSOR ===== */
+        .custom-cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: rgba(255, 0, 0, 0.9);
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            mix-blend-mode: difference;
+        }
+
+        .cursor-follower {
+            position: fixed;
+            width: 50px;
+            height: 50px;
+            border: 2px solid rgba(255, 0, 0, 0.8);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s ease, width 0.3s ease, height 0.3s ease;
+            mix-blend-mode: difference;
+        }
+
+        /* ===== MODALS ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 10001;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background-color: rgba(0, 0, 0, 0.9);
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 90%;
+            border: 3px solid rgba(255, 0, 0, 0.7);
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.4);
+            position: relative;
+            animation: modalFadeIn 0.3s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close-modal:hover {
+            color: #ff0000;
+            transform: rotate(90deg);
+        }
+
+        .modal-title {
+            font-family: 'Press Start 2P', cursive;
+            color: #ff0000;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+        }
+
+        .modal-text {
+            font-family: 'Lato', sans-serif;
+            color: white;
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        /* ===== SETTINGS MODAL ===== */
+        .settings-tabs {
+            display: flex;
+            border-bottom: 1px solid rgba(255, 0, 0, 0.3);
+            margin-bottom: 20px;
+        }
+        
+        .settings-tab {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            color: #fff;
+            font-family: 'Silkscreen', cursive;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .settings-tab.active {
+            color: #ff0000;
+        }
+        
+        .settings-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #ff0000;
+        }
+        
+        .settings-tab-content {
+            display: none;
+            padding: 10px;
+        }
+        
+        .settings-tab-content.active {
+            display: block;
+        }
+        
+        .setting-option {
+            margin-bottom: 25px;
+        }
+        
+        .setting-option h3 {
+            font-family: 'Silkscreen', cursive;
+            color: #fff;
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+        
+        /* Tab Cloaking Styles */
+        .cloak-controls {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 0, 0, 0.3);
+        }
+        
+        .cloak-input {
+            margin-bottom: 15px;
+        }
+        
+        .cloak-input label {
+            display: block;
+            margin-bottom: 5px;
+            font-family: 'Silkscreen', cursive;
+            font-size: 0.9em;
+        }
+        
+        .cloak-input input {
+            width: 100%;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 0, 0, 0.5);
+            color: white;
+            border-radius: 4px;
+        }
+        
+        .cloak-presets {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+        
+        .cloak-preset {
+            padding: 5px 10px;
+            background: rgba(255, 0, 0, 0.2);
+            border: none;
+            border-radius: 4px;
+            color: white;
+            font-family: 'Silkscreen', cursive;
+            font-size: 0.8em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .cloak-preset:hover {
+            background: rgba(255, 0, 0, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .cloak-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .settings-button {
+            padding: 8px 15px;
+            background: #ff0000;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .settings-button:hover {
+            background: #ff3333;
+            transform: translateY(-2px);
+        }
+        
+        .settings-button.secondary {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 768px) {
+            body {
+                padding-left: 0;
+            }
+
+            .sidebar {
+                width: 0;
+                overflow: hidden;
+            }
+
+            .sidebar.active {
+                width: var(--sidebar-expanded-width);
+            }
+
+            .logo-text,
+            .menu-text {
+                opacity: 1 !important;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                z-index: 1001;
+                background: rgba(255, 0, 0, 0.7);
+                border-radius: 50%;
+                width: 50px;
+                height: 50px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.5rem;
+                color: white;
+                border: none;
+            }
+
+            .title {
+                font-size: 2.5em;
+            }
+            #clock {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .title {
+                font-size: 1.5em;
+            }
+            .marquee-text { 
+                font-size: 1.1em; 
+            }
+            .marquee-container {
+                width: 95%;
+            }
+            .search-bar {
+                padding: 14px 20px;
+                padding-right: 55px;
+                font-size: 1.1em;
+            }
+            .search-button {
+                width: 45px;
+                height: 45px;
+                font-size: 1em;
+            }
+            #clock {
+                font-size: 10px;
+            }
+            .discord-btn {
+                font-size: 0.9em;
+                padding: 8px 12px;
+            }
+            .modal-content {
+                padding: 15px;
+            }
+            .modal-title {
+                font-size: 1.2em;
+            }
+            .modal-text {
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ===== SIDEBAR MENU ===== -->
+    <div class="sidebar" id="sidebar">
+        <div class="logo">
+            <span class="logo-text">ZONE X</span>
+        </div>
+        
+        <div class="menu-items">
+            <a href="#" class="menu-item active">
+                <i class="fas fa-home"></i>
+                <span class="menu-text">Home</span>
+            </a>
+            <a href="https://sites.google.com/view/fus3-bomb/gm43s" class="menu-item" target="_blank">
+                <i class="fas fa-gamepad"></i>
+                <span class="menu-text">Games</span>
+            </a>
+            <a href="https://sites.google.com/view/fus3-bomb/entertainment/movies" class="menu-item" target="_blank">
+                <i class="fas fa-film"></i>
+                <span class="menu-text">Movies</span>
+            </a>
+            <a href="https://sites.google.com/view/fus3-bomb/entertainment/tv-shows" class="menu-item" target="_blank">
+                <i class="fas fa-tv"></i>
+                <span class="menu-text">TV Shows</span>
+                <span class="badge">NEW</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-handshake"></i>
+                <span class="menu-text">Partners</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-music"></i>
+                <span class="menu-text">Music</span>
+            </a>
+            <a href="#" class="menu-item" id="settings-nav-link">
+                <i class="fas fa-cog"></i>
+                <span class="menu-text">Settings</span>
+            </a>
+            <a href="#" class="menu-item" id="about-nav-link">
+                <i class="fas fa-info-circle"></i>
+                <span class="menu-text">About</span>
+            </a>
+        </div>
+    </div>
+
+    <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <canvas id="plexus-canvas"></canvas>
+    <div class="custom-cursor"></div>
+    <div class="cursor-follower"></div>
+    
+    <!-- ===== BATTERY ===== -->
+    <div id="battery-status">
+        <div class="battery-container">
+            <div id="battery-level"></div>
+            <div class="battery-terminal"></div>
+        </div>
+        <span id="battery-icon"><i class="fas fa-bolt"></i></span>
+    </div>
+
+    <!-- ===== CLOCK ===== -->
+    <div id="clock-container">
+        <div id="clock"></div>
+    </div>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <div id="main-content">
+        <h1 class="title">
+            <span class="typing-container" id="typing-text"></span>
+            <span class="typing-cursor"></span>
+        </h1>
+
+        <div class="marquee-container">
+            <div class="marquee-text">
+            WARNING: HIGH-LEVEL ACCESS REQUIRED - SYSTEM ADMIN
+            </div>
+        </div>
+       
+        <!-- ===== SEARCH BAR ===== -->
+        <div class="search-container">
+            <input type="text" class="search-bar" placeholder="Search restricted files..." id="siteSearch">
+            <button class="search-button" id="searchButton">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- ===== DISCORD BUTTON ===== -->
+    <a href="https://discord.gg/YpxnycpwDW" class="discord-btn" target="_blank">
+        <i class="fab fa-discord"></i> ENTER ZONE X
+    </a>
+
+    <!-- ===== MODALS ===== -->
+    <div id="welcomeModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeWelcome">&times;</span>
+            <h2 class="modal-title">Welcome to ZONE X</h2>
+            <div class="modal-text">
+                <p>Welcome to <span style="color:#ff0000;font-weight:bold">ZONE X</span> - the ultimate digital frontier.</p>
+                <p>Use the sidebar menu to explore.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="aboutModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2 class="modal-title">About ZONE X</h2>
+            <div class="modal-text">
+                <p><span style="color:#ff0000;font-weight:bold">ZONE X</span> is a digital hub for gamers and creators.</p>
+                <p>Features:</p>
+                <ul style="margin-left:20px;margin-bottom:15px">
+                    <li>• Premium game collections</li>
+                    <li>• Rare media content</li>
+                    <li>• Active community</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SETTINGS MODAL ===== -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content" style="max-width: 700px;">
+            <span class="close-modal">&times;</span>
+            <h2 class="modal-title">ZONE X SETTINGS</h2>
+            
+            <div class="settings-tabs">
+                <button class="settings-tab active" data-tab="appearance">Appearance</button>
+                <button class="settings-tab" data-tab="performance">Performance</button>
+                <button class="settings-tab" data-tab="cloaking">Tab Cloaking</button>
+            </div>
+            
+            <div class="settings-content">
+                <!-- Appearance Settings -->
+                <div id="appearance-settings" class="settings-tab-content active">
+                    <div class="setting-option">
+                        <h3>Theme Color</h3>
+                        <div class="color-options">
+                            <div class="color-option red" data-color="red"></div>
+                            <div class="color-option blue" data-color="blue"></div>
+                            <div class="color-option green" data-color="green"></div>
+                            <div class="color-option purple" data-color="purple"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="setting-option">
+                        <h3>Background Intensity</h3>
+                        <input type="range" id="plexus-intensity" min="0" max="100" value="50">
+                    </div>
+                </div>
+                
+                <!-- Performance Settings -->
+                <div id="performance-settings" class="settings-tab-content">
+                    <div class="setting-option">
+                        <h3>Animation Quality</h3>
+                        <select id="animation-quality">
+                            <option value="high">High</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="low">Low</option>
+                        </select>
+                    </div>
+                    
+                    <div class="setting-option">
+                        <h3>Plexus Nodes</h3>
+                        <input type="range" id="plexus-nodes" min="20" max="150" value="80">
+                    </div>
+                </div>
+                
+                <!-- Tab Cloaking Settings -->
+                <div id="cloaking-settings" class="settings-tab-content">
+                    <div class="setting-option">
+                        <h3>Tab Cloaking</h3>
+                        <div class="cloak-controls">
+                            <div class="cloak-input">
+                                <label>Tab Title:</label>
+                                <input type="text" id="cloak-title" placeholder="e.g. Google Docs">
+                            </div>
+                            <div class="cloak-input">
+                                <label>Favicon URL:</label>
+                                <input type="text" id="cloak-favicon" placeholder="https://example.com/favicon.ico">
+                            </div>
+                            <div class="cloak-presets">
+                                <button class="cloak-preset" data-title="Google Docs" data-icon="https://www.google.com/favicon.ico">Google</button>
+                                <button class="cloak-preset" data-title="Outlook" data-icon="https://outlook.live.com/favicon.ico">Outlook</button>
+                                <button class="cloak-preset" data-title="Notion" data-icon="https://www.notion.so/favicon.ico">Notion</button>
+                                <button class="cloak-preset" data-title="Calculator" data-icon="https://cdn-icons-png.flaticon.com/512/149/149423.png">Calculator</button>
+                                <button class="cloak-preset" data-title="Wikipedia" data-icon="https://en.wikipedia.org/static/favicon/wikipedia.ico">Wikipedia</button>
+                                <button class="cloak-preset" data-title="GitHub" data-icon="https://github.githubassets.com/favicons/favicon.png">GitHub</button>
+                            </div>
+                            <div class="cloak-actions">
+                                <button id="apply-cloak" class="settings-button">Apply</button>
+                                <button id="reset-cloak" class="settings-button secondary">Reset</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="settings-footer" style="margin-top: 20px;">
+                <button id="save-settings" class="settings-button">Save Settings</button>
+                <button id="reset-settings" class="settings-button secondary">Reset Defaults</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== PLEXUS BACKGROUND =====
+        const canvas = document.getElementById('plexus-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        const points = [];
+        const numPoints = 80;
+        const maxDistance = 300;
+        
+        class Point {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 1.5;
+                this.vy = (Math.random() - 0.5) * 1.5;
+                this.radius = Math.random() * 3 + 2;
+                this.opacity = 0.8;
+            }
+            
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+            }
+            
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 0, 0, ${this.opacity})`;
+                ctx.fill();
+            }
+        }
+        
+        for (let i = 0; i < numPoints; i++) {
+            points.push(new Point());
+        }
+        
+        function drawLines() {
+            for (let i = 0; i < points.length; i++) {
+                for (let j = i + 1; j < points.length; j++) {
+                    const dx = points[i].x - points[j].x;
+                    const dy = points[i].y - points[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < maxDistance) {
+                        const opacity = (1 - distance / maxDistance) * 0.25;
+                        ctx.strokeStyle = `rgba(255, 0, 0, ${opacity})`;
+                        ctx.lineWidth = 1.5;
+                        ctx.beginPath();
+                        ctx.moveTo(points[i].x, points[i].y);
+                        ctx.lineTo(points[j].x, points[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+        
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            for (const point of points) {
+                point.update();
+                point.draw();
+            }
+            
+            drawLines();
+            requestAnimationFrame(animate);
+        }
+        
+        animate();
+        
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // ===== CURSOR EFFECTS =====
+        const cursor = document.querySelector('.custom-cursor');
+        const follower = document.querySelector('.cursor-follower');
+        
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+            
+            setTimeout(() => {
+                follower.style.left = e.clientX + 'px';
+                follower.style.top = e.clientY + 'px';
+            }, 50);
+        });
+        
+        // ===== TYPING ANIMATION =====
+        const messages = [
+            "ZONE X",
+            "Z0N3 X",
+            "ACCESS: RESTRICTED",
+            "SYSTEM ONLINE"
+        ];
+        
+        const typingElement = document.getElementById('typing-text');
+        let messageIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        
+        function typeWriter() {
+            const currentMessage = messages[messageIndex];
+            
+            if (isDeleting) {
+                typingElement.textContent = currentMessage.substring(0, charIndex - 1);
+                charIndex--;
+                
+                if (charIndex === 0) {
+                    isDeleting = false;
+                    messageIndex = (messageIndex + 1) % messages.length;
+                    setTimeout(typeWriter, 500);
+                } else {
+                    setTimeout(typeWriter, 50);
+                }
+            } else {
+                typingElement.textContent = currentMessage.substring(0, charIndex + 1);
+                charIndex++;
+                
+                if (charIndex === currentMessage.length) {
+                    isDeleting = true;
+                    setTimeout(typeWriter, 2000);
+                } else {
+                    setTimeout(typeWriter, 100);
+                }
+            }
+        }
+
+        // ===== BATTERY STATUS =====
+        function updateBattery() {
+            if ('getBattery' in navigator) {
+                navigator.getBattery().then(battery => {
+                    function updateAll() {
+                        const level = Math.floor(battery.level * 100);
+                        document.getElementById('battery-level').style.width = `${level}%`;
+                        document.getElementById('battery-level').textContent = `${level}%`;
+                        
+                        const batteryIcon = document.getElementById('battery-icon');
+                        
+                        if (battery.charging) {
+                            document.getElementById('battery-level').classList.add('charging');
+                            batteryIcon.style.opacity = '1';
+                        } else {
+                            document.getElementById('battery-level').classList.remove('charging');
+                            batteryIcon.style.opacity = '0.5';
+                        }
+                    }
+                    
+                    updateAll();
+                    battery.addEventListener('levelchange', updateAll);
+                    battery.addEventListener('chargingchange', updateAll);
+                });
+            } else {
+                document.getElementById('battery-status').style.display = 'none';
+            }
+        }
+
+        // ===== CLOCK FUNCTIONALITY =====
+        function updateClock() {
+            const now = new Date();
+            const clockElement = document.getElementById('clock');
+            const timeStr = now.toLocaleTimeString(undefined, { 
+                hour: 'numeric', 
+                minute: '2-digit',
+                hour12: true 
+            });
+            clockElement.textContent = timeStr;
+        }
+
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // ===== MODAL FUNCTIONALITY =====
+        const aboutModal = document.getElementById("aboutModal");
+        const welcomeModal = document.getElementById("welcomeModal");
+        const settingsModal = document.getElementById("settingsModal");
+        
+        function openModal(modal) {
+            modal.style.display = "flex";
+        }
+
+        function closeModal(modal) {
+            modal.style.display = "none";
+        }
+
+        document.getElementById('about-nav-link').addEventListener('click', function(e) {
+            e.preventDefault();
+            openModal(aboutModal);
+        });
+
+        document.getElementById('settings-nav-link').addEventListener('click', function(e) {
+            e.preventDefault();
+            openModal(settingsModal);
+        });
+
+        // Add handlers for other icon buttons
+        document.querySelectorAll('.menu-item').forEach(link => {
+            if (!link.href && link.id !== 'about-nav-link' && link.id !== 'settings-nav-link') {
+                link.addEventListener('click', function(e) {
+                    if (!this.href || this.href === '#') {
+                        e.preventDefault();
+                    }
+                });
+            }
+        });
+
+        document.querySelectorAll('.close-modal').forEach(button => {
+            button.addEventListener("click", function() {
+                closeModal(this.closest('.modal'));
+            });
+        });
+
+        window.addEventListener("click", (event) => {
+            if (event.target.classList.contains('modal')) {
+                closeModal(event.target);
+            }
+        });
+
+        // ===== SITE SEARCH FUNCTIONALITY =====
+        document.getElementById('searchButton').addEventListener('click', searchSite);
+        document.getElementById('siteSearch').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchSite();
+            }
+        });
+
+        function searchSite() {
+            const searchTerm = document.getElementById('siteSearch').value.trim();
+            if (searchTerm !== '') {
+                // Search within the current site
+                const siteUrl = window.location.href;
+                const searchUrl = `https://sites.google.com/view/fus3-bomb/search?query=${encodeURIComponent(searchTerm)}`;
+                window.location.href = searchUrl;
+            }
+        }
+
+        // ===== MOBILE MENU TOGGLE =====
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const sidebar = document.getElementById('sidebar');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+            mobileMenuBtn.innerHTML = sidebar.classList.contains('active') ? 
+                '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+        });
+
+        // ===== SETTINGS FUNCTIONALITY =====
+        // Tab switching
+        document.querySelectorAll('.settings-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs
+                document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
+                // Add active class to clicked tab
+                this.classList.add('active');
+                
+                // Hide all tab content
+                document.querySelectorAll('.settings-tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                
+                // Show the selected tab content
+                const tabId = this.getAttribute('data-tab');
+                document.getElementById(`${tabId}-settings`).classList.add('active');
+            });
+        });
+        
+        // ===== TAB CLOAKING FUNCTIONALITY =====
+        const cloakTitleInput = document.getElementById('cloak-title');
+        const cloakFaviconInput = document.getElementById('cloak-favicon');
+        const applyCloakBtn = document.getElementById('apply-cloak');
+        const resetCloakBtn = document.getElementById('reset-cloak');
+        
+        // Apply cloak button
+        applyCloakBtn.addEventListener('click', function() {
+            const newTitle = cloakTitleInput.value.trim() || 'ZONE X';
+            const newFavicon = cloakFaviconInput.value.trim() || 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕹️</text></svg>';
+            
+            // Update title
+            document.getElementById('dynamic-title').textContent = newTitle;
+            
+            // Update favicon
+            document.getElementById('dynamic-favicon').href = newFavicon;
+            
+            // Save to localStorage
+            localStorage.setItem('tabCloakTitle', newTitle);
+            localStorage.setItem('tabCloakFavicon', newFavicon);
+            
+            alert('Tab cloaking applied!');
+        });
+        
+        // Reset cloak button
+        resetCloakBtn.addEventListener('click', function() {
+            // Reset to default
+            document.getElementById('dynamic-title').textContent = 'ZONE X';
+            document.getElementById('dynamic-favicon').href = 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕹️</text></svg>';
+            
+            // Clear inputs
+            cloakTitleInput.value = '';
+            cloakFaviconInput.value = '';
+            
+            // Remove from localStorage
+            localStorage.removeItem('tabCloakTitle');
+            localStorage.removeItem('tabCloakFavicon');
+            
+            alert('Tab cloaking reset!');
+        });
+        
+        // Preset buttons
+        document.querySelectorAll('.cloak-preset').forEach(preset => {
+            preset.addEventListener('click', function() {
+                const title = this.getAttribute('data-title');
+                const icon = this.getAttribute('data-icon');
+                
+                cloakTitleInput.value = title;
+                cloakFaviconInput.value = icon;
+            });
+        });
+        
+        // Load saved cloak settings
+        function loadCloakSettings() {
+            const savedTitle = localStorage.getItem('tabCloakTitle');
+            const savedFavicon = localStorage.getItem('tabCloakFavicon');
+            
+            if (savedTitle) {
+                document.getElementById('dynamic-title').textContent = savedTitle;
+                cloakTitleInput.value = savedTitle;
+            }
+            
+            if (savedFavicon) {
+                document.getElementById('dynamic-favicon').href = savedFavicon;
+                cloakFaviconInput.value = savedFavicon;
+            }
+        }
+        
+        // ===== INITIALIZE =====
+        window.addEventListener('load', () => {
+            setTimeout(typeWriter, 1000);
+            updateBattery();
+            loadCloakSettings();
+            setTimeout(() => openModal(welcomeModal), 1500);
+            
+            // Set active nav item based on current page
+            const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+            document.querySelectorAll('.menu-item').forEach(item => {
+                if (item.getAttribute('href') === currentPage) {
+                    item.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
